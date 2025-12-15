@@ -32,7 +32,6 @@
     },
     "types": [
       "node",
-      "vite/client",
       "element-plus/global",
       "@pureadmin/table/volar",
       "unplugin-icons/types/vue",
@@ -41,6 +40,7 @@
   },
   "include": [
     "mock/*.ts",
+    "build/**/*.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
