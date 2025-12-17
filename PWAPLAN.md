@@ -48,11 +48,11 @@ export function getPluginsList(
     // ... 现有插件 ...
 +   VitePWA({
 +     registerType: "autoUpdate",
-+     includeAssets: ["favicon.ico", "logo.svg"],
++     includeAssets: ["favicon.ico", "logo.png"],
 +     manifest: {
-+       name: "PureAdmin",
-+       short_name: "PureAdmin",
-+       description: "Vue Pure Admin 后台管理系统",
++       name: "DTSP",
++       short_name: "DTSP",
++       description: "DTSP数字技术服务平台",
 +       theme_color: "#409EFF",
 +       background_color: "#ffffff",
 +       display: "standalone",
@@ -105,7 +105,7 @@ export function getPluginsList(
 
 #### [NEW] public/pwa-512x512.png
 
-基于现有的 `logo.svg` 生成不同尺寸的 PNG 图标：
+基于现有的 `logo.png` 生成不同尺寸的 PNG 图标：
 
 | 文件名            | 尺寸    | 用途                         |
 | ----------------- | ------- | ---------------------------- |
@@ -236,7 +236,7 @@ graph LR
 
 public/
 ├── favicon.ico       (已存在)
-├── logo.svg          (已存在)
+├── logo.png          (已存在)
 ├── pwa-192x192.png   [新增]
 └── pwa-512x512.png   [新增]
 

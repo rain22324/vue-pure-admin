@@ -77,11 +77,11 @@ export function getPluginsList(
     // PWA 支持
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "logo.svg"],
+      includeAssets: ["favicon.ico", "logo.png"],
       manifest: {
-        name: "PureAdmin",
-        short_name: "PureAdmin",
-        description: "Vue Pure Admin 后台管理系统",
+        name: "DTSP",
+        short_name: "DTSP",
+        description: "DTSP数字技术服务平台",
         theme_color: "#409EFF",
         background_color: "#ffffff",
         display: "standalone",
