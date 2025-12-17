@@ -82,14 +82,14 @@ html[data-theme="mingQing"] {
   --pure-theme-menu-active-before: #59bfc1;
 }
 
-/* 酸橙绿 */
-html[data-theme="auroraGreen"] {
-  --pure-theme-sub-menu-active-text: #fff;
-  --pure-theme-menu-bg: #0b1e15;
+/* 信科绿 */
+html[data-theme="cyitGreen"] {
+  --pure-theme-sub-menu-active-text: #00b09c;
+  --pure-theme-menu-bg: #fff;
   --pure-theme-menu-hover: rgb(96 172 128 / 15%);
-  --pure-theme-sub-menu-bg: #000;
+  --pure-theme-sub-menu-bg: #fff;
   --pure-theme-menu-text: #7a80b4;
-  --pure-theme-sidebar-logo: #112f21;
-  --pure-theme-menu-title-hover: #fff;
-  --pure-theme-menu-active-before: #60ac80;
+  --pure-theme-sidebar-logo: #fff;
+  --pure-theme-menu-title-hover: #00b09c;
+  --pure-theme-menu-active-before: #00b09c;
 }

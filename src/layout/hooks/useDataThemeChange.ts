@@ -27,8 +27,8 @@ export function useDataThemeChange() {
     { color: "#fa541c", themeColor: "volcano" },
     /* 绿宝石 */
     { color: "#13c2c2", themeColor: "mingQing" },
-    /* 酸橙绿 */
-    { color: "#52c41a", themeColor: "auroraGreen" }
+    /* 信科绿 */
+    { color: "#00B09C", themeColor: "cyitGreen" }
   ]);
 
   const { $storage } = useGlobal<GlobalPropertiesApi>();
