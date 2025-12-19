@@ -76,6 +76,9 @@ html.dark {
     $lightness: 15%
   );
 
+  /* 菜单文本颜色 */
+  --pure-theme-menu-text: #bbbaba;
+
   .navbar,
   .tags-view,
   .contextmenu,
