@@ -1,7 +1,7 @@
 .wave {
   position: fixed;
   height: 100%;
-  width: 80%;
+  width: 100%;
   left: 0;
   bottom: 0;
   z-index: -1;
@@ -11,10 +11,8 @@
   width: 100vw;
   height: 100vh;
   max-width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 18rem;
-  padding: 0 2rem;
+  display: flex;
+  justify-content: center;
 }
 
 .img {
@@ -31,11 +29,14 @@
   display: flex;
   align-items: center;
   text-align: center;
-  overflow: hidden;
 }
 
 .login-form {
   width: 360px;
+  background-color: var(--el-bg-color);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px 0 rgba(0, 0, 0, 0.1);
 }
 
 .avatar {
@@ -46,7 +47,7 @@
 .login-form h2 {
   text-transform: uppercase;
   margin: 15px 0;
-  color: #999;
+  color: #252527;
   font:
     bold 200% Consolas,
     Monaco,

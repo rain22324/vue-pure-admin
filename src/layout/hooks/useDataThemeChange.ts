@@ -15,6 +15,10 @@ export function useDataThemeChange() {
   const themeColors = ref<Array<themeColorsType>>([
     /* 亮白色 */
     { color: "#ffffff", themeColor: "light" },
+    /* 信科绿 */
+    { color: "#00B09C", themeColor: "cyitGreen" },
+    /* 绿宝石 */
+    { color: "#13c2c2", themeColor: "mingQing" },
     /* 道奇蓝 */
     { color: "#1b2a47", themeColor: "default" },
     /* 深紫罗兰色 */
@@ -24,11 +28,7 @@ export function useDataThemeChange() {
     /* 猩红色 */
     { color: "#f5222d", themeColor: "dusk" },
     /* 橙红色 */
-    { color: "#fa541c", themeColor: "volcano" },
-    /* 绿宝石 */
-    { color: "#13c2c2", themeColor: "mingQing" },
-    /* 信科绿 */
-    { color: "#00B09C", themeColor: "cyitGreen" }
+    { color: "#fa541c", themeColor: "volcano" }
   ]);
 
   const { $storage } = useGlobal<GlobalPropertiesApi>();

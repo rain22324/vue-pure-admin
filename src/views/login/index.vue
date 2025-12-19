@@ -122,7 +122,7 @@ watch(loginDay, value => {
 
 <template>
   <div class="select-none">
-    <img :src="bg" class="wave" />
+    <!-- <img :src="bg" class="wave" /> -->
     <div class="flex-c absolute right-5 top-3">
       <!-- 主题 -->
       <el-switch
@@ -166,9 +166,6 @@ watch(loginDay, value => {
       </el-dropdown>
     </div>
     <div class="login-container">
-      <div class="img">
-        <component :is="toRaw(illustration)" />
-      </div>
       <div class="login-box">
         <div class="login-form">
           <avatar class="avatar" />
