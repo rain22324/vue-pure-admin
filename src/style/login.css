@@ -55,12 +55,9 @@
 }
 
 @media screen and (max-width: 1180px) {
-  .login-container {
-    grid-gap: 9rem;
-  }
-
   .login-form {
     width: 290px;
+    box-shadow: none;
   }
 
   .login-form h2 {
@@ -85,10 +82,6 @@
 
   .img {
     display: none;
-  }
-
-  .login-container {
-    grid-template-columns: 1fr;
   }
 
   .login-box {

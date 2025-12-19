@@ -221,6 +221,11 @@ const themeOptions = computed<Array<OptionsType>>(() => {
 const markOptions = computed<Array<OptionsType>>(() => {
   return [
     {
+      label: t("panel.pureTagsStyleChrome"),
+      tip: t("panel.pureTagsStyleChromeTip"),
+      value: "chrome"
+    },
+    {
       label: t("panel.pureTagsStyleSmart"),
       tip: t("panel.pureTagsStyleSmartTip"),
       value: "smart"
@@ -229,11 +234,6 @@ const markOptions = computed<Array<OptionsType>>(() => {
       label: t("panel.pureTagsStyleCard"),
       tip: t("panel.pureTagsStyleCardTip"),
       value: "card"
-    },
-    {
-      label: t("panel.pureTagsStyleChrome"),
-      tip: t("panel.pureTagsStyleChromeTip"),
-      value: "chrome"
     }
   ];
 });
@@ -442,7 +442,7 @@ onUnmounted(() => removeMatchMedia);
       <Segmented
         resize
         class="select-none"
-        :modelValue="markValue === 'smart' ? 0 : markValue === 'card' ? 1 : 2"
+        :modelValue="markValue === 'chrome' ? 0 : markValue === 'smart' ? 1 : 2"
         :options="markOptions"
         @change="onChange"
       />
