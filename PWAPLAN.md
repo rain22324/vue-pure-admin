@@ -53,7 +53,7 @@ export function getPluginsList(
 +       name: "DTSP",
 +       short_name: "DTSP",
 +       description: "DTSP数字技术服务平台",
-+       theme_color: "#409EFF",
++       theme_color: "#ffffff",
 +       background_color: "#ffffff",
 +       display: "standalone",
 +       start_url: "/",
@@ -133,7 +133,7 @@ export function getPluginsList(
       content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0"
     />
 +   <meta name="description" content="Vue Pure Admin 后台管理系统" />
-+   <meta name="theme-color" content="#409EFF" />
++   <meta name="theme-color" content="#ffffff" />
 +   <link rel="apple-touch-icon" href="/pwa-192x192.png" />
     <title>vue-pure-admin</title>
     <link rel="icon" href="/favicon.ico" />
