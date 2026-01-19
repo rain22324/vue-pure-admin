@@ -82,7 +82,7 @@ export function getPluginsList(
         name: "DTSP",
         short_name: "DTSP",
         description: "DTSP数字技术服务平台",
-        theme_color: "#409EFF",
+        theme_color: "#ffffff",
         background_color: "#ffffff",
         display: "standalone",
         start_url: "/",
