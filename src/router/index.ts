@@ -8,7 +8,6 @@ import remainingRouter from "./modules/remaining";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import {
-  isUrl,
   openLink,
   cloneDeep,
   isAllEmpty,
@@ -135,7 +134,7 @@ router.beforeEach((to: ToRouteType, _from, next) => {
     }
   }
   const userInfo = storageLocal().getItem<DataInfo<number>>(userKey);
-  const externalLink = isUrl(to?.name as string);
+  const externalLink = /^http(s?):\/\//.test(to?.name as string);
   if (!externalLink) {
     to.matched.some(item => {
       if (!item.meta.title) return "";
