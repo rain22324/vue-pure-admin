@@ -85,6 +85,7 @@
     "nprogress": "^0.2.0",
     "path-browserify": "^1.0.1",
     "pinia": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "pinyin-pro": "^3.27.0",
     "plus-pro-components": "^0.1.30",
     "qrcode": "^1.5.4",
