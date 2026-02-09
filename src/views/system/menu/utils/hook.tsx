@@ -1,7 +1,12 @@
 import editForm from "../form.vue";
-import { handleTree } from "@/utils/tree";
+import permitForm from "../permit.vue";
 import { message } from "@/utils/message";
-import { getMenuList } from "@/api/system";
+import {
+  getMenuTree,
+  createMenu,
+  updateMenu,
+  deleteMenu
+} from "@/api/system/menus";
 import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
@@ -11,7 +16,7 @@ import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
 
 export function useMenu() {
   const form = reactive({
-    title: ""
+    menu_name: ""
   });
 
   const formRef = ref();
@@ -34,7 +39,7 @@ export function useMenu() {
   const columns: TableColumnList = [
     {
       label: "菜单名称",
-      prop: "title",
+      prop: "menu_name",
       align: "left",
       cellRenderer: ({ row }) => (
         <>
@@ -43,21 +48,17 @@ export function useMenu() {
               style: { paddingTop: "1px" }
             })}
           </span>
-          <span>{transformI18n(row.title)}</span>
+          <span>{transformI18n(row.menu_name)}</span>
         </>
       )
     },
     {
       label: "菜单类型",
-      prop: "menuType",
+      prop: "flag",
       width: 100,
       cellRenderer: ({ row, props }) => (
-        <el-tag
-          size={props.size}
-          type={getMenuType(row.menuType)}
-          effect="plain"
-        >
-          {getMenuType(row.menuType, true)}
+        <el-tag size={props.size} type={getMenuType(row.flag)} effect="plain">
+          {getMenuType(row.flag, true)}
         </el-tag>
       )
     },
@@ -67,29 +68,28 @@ export function useMenu() {
     },
     {
       label: "组件路径",
-      prop: "component",
-      formatter: ({ path, component }) =>
-        isAllEmpty(component) ? path : component
+      prop: "url",
+      formatter: ({ path, url }) => (isAllEmpty(url) ? path : url)
     },
     {
       label: "权限标识",
-      prop: "auths"
+      prop: "data_permits"
     },
     {
       label: "排序",
-      prop: "rank",
+      prop: "order_index",
       width: 100
     },
     {
       label: "隐藏",
-      prop: "showLink",
-      formatter: ({ showLink }) => (showLink ? "否" : "是"),
+      prop: "disabled_flag",
+      formatter: ({ disabled_flag }) => (disabled_flag === 1 ? "是" : "否"),
       width: 100
     },
     {
       label: "操作",
       fixed: "right",
-      width: 210,
+      width: 320,
       slot: "operation"
     }
   ];
@@ -106,15 +106,30 @@ export function useMenu() {
 
   async function onSearch() {
     loading.value = true;
-    const { data } = await getMenuList(); // 这里是返回一维数组结构，前端自行处理成树结构，返回格式要求：唯一id加父节点parentId，parentId取父节点id
+    const { data } = await getMenuTree();
     let newData = data;
-    if (!isAllEmpty(form.title)) {
-      // 前端搜索菜单名称
-      newData = newData.filter(item =>
-        transformI18n(item.title).includes(form.title)
-      );
+
+    if (!isAllEmpty(form.menu_name)) {
+      const filterNode = (nodes: any[], query: string): any[] => {
+        return nodes.reduce((permits, node) => {
+          const titleMatches = transformI18n(node.menu_name).includes(query);
+          const children = node.children
+            ? filterNode(node.children, query)
+            : [];
+
+          if (titleMatches || children.length > 0) {
+            permits.push({
+              ...node,
+              children: children.length > 0 ? children : node.children
+            });
+          }
+          return permits;
+        }, []);
+      };
+      newData = filterNode(newData, form.menu_name);
     }
-    dataList.value = handleTree(newData); // 处理成树结构
+
+    dataList.value = newData;
     setTimeout(() => {
       loading.value = false;
     }, 500);
@@ -124,40 +139,34 @@ export function useMenu() {
     if (!treeList || !treeList.length) return;
     const newTreeList = [];
     for (let i = 0; i < treeList.length; i++) {
-      treeList[i].title = transformI18n(treeList[i].title);
+      treeList[i].title = transformI18n(treeList[i].menu_name);
       formatHigherMenuOptions(treeList[i].children);
       newTreeList.push(treeList[i]);
     }
     return newTreeList;
   }
 
-  function openDialog(title = "新增", row?: FormItemProps) {
+  function openDialog(title = "新增", row?: any) {
     addDialog({
       title: `${title}菜单`,
       props: {
         formInline: {
-          menuType: row?.menuType ?? 0,
+          flag: row?.flag ?? 0,
           higherMenuOptions: formatHigherMenuOptions(cloneDeep(dataList.value)),
-          parentId: row?.parentId ?? 0,
-          title: row?.title ?? "",
-          name: row?.name ?? "",
+          pid: row?.pid ?? 0,
+          menu_name: row?.menu_name ?? "",
           path: row?.path ?? "",
-          component: row?.component ?? "",
-          rank: row?.rank ?? 99,
-          redirect: row?.redirect ?? "",
+          database_name: row?.database_name ?? "",
+          order_index: row?.order_index ?? undefined,
           icon: row?.icon ?? "",
-          extraIcon: row?.extraIcon ?? "",
-          enterTransition: row?.enterTransition ?? "",
-          leaveTransition: row?.leaveTransition ?? "",
-          activePath: row?.activePath ?? "",
-          auths: row?.auths ?? "",
-          frameSrc: row?.frameSrc ?? "",
-          frameLoading: row?.frameLoading ?? true,
-          keepAlive: row?.keepAlive ?? false,
-          hiddenTag: row?.hiddenTag ?? false,
-          fixedTag: row?.fixedTag ?? false,
-          showLink: row?.showLink ?? true,
-          showParent: row?.showParent ?? false
+          url: row?.url ?? "",
+          data_permits: row?.data_permits
+            ? typeof row.data_permits === "string"
+              ? JSON.parse(row.data_permits)
+              : row.data_permits
+            : [],
+          keep_alive: row?.keep_alive ?? false,
+          disabled_flag: row?.disabled_flag ?? 0
         }
       },
       width: "45%",
@@ -171,7 +180,7 @@ export function useMenu() {
         const curData = options.props.formInline as FormItemProps;
         function chores() {
           message(
-            `您${title}了菜单名称为${transformI18n(curData.title)}的这条数据`,
+            `您${title}了菜单名称为${transformI18n(curData.menu_name)}的这条数据`,
             {
               type: "success"
             }
@@ -179,15 +188,16 @@ export function useMenu() {
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
-        FormRef.validate(valid => {
+        FormRef.validate(async valid => {
           if (valid) {
             console.log("curData", curData);
             // 表单规则校验通过
+            const { higherMenuOptions: _, ...restData } = curData;
             if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
+              await createMenu(restData);
               chores();
             } else {
-              // 实际开发先调用修改接口，再进行下面操作
+              await updateMenu(row.s_mid, restData);
               chores();
             }
           }
@@ -196,8 +206,22 @@ export function useMenu() {
     });
   }
 
-  function handleDelete(row) {
-    message(`您删除了菜单名称为${transformI18n(row.title)}的这条数据`, {
+  function openPermitDialog(row: any) {
+    addDialog({
+      title: `权限配置 - ${transformI18n(row.menu_name)}`,
+      width: "55%",
+      draggable: true,
+      fullscreen: deviceDetection(),
+      fullscreenIcon: true,
+      closeOnClickModal: false,
+      hideFooter: true,
+      contentRenderer: () => h(permitForm, { menuRow: row })
+    });
+  }
+
+  async function handleDelete(row) {
+    await deleteMenu(row.s_mid);
+    message(`您删除了菜单名称为${transformI18n(row.menu_name)}的这条数据`, {
       type: "success"
     });
     onSearch();
@@ -220,6 +244,7 @@ export function useMenu() {
     openDialog,
     /** 删除菜单 */
     handleDelete,
+    openPermitDialog,
     handleSelectionChange
   };
 }

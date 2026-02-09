@@ -9,9 +9,10 @@ import Delete from "~icons/ep/delete";
 import EditPen from "~icons/ep/edit-pen";
 import Refresh from "~icons/ep/refresh";
 import AddFill from "~icons/ri/add-circle-line";
+import SetUp from "~icons/ep/set-up";
 
 defineOptions({
-  name: "SystemMenu"
+  name: "menus.pureSystemMenu"
 });
 
 const formRef = ref();
@@ -25,6 +26,7 @@ const {
   resetForm,
   openDialog,
   handleDelete,
+  openPermitDialog,
   handleSelectionChange
 } = useMenu();
 
@@ -42,9 +44,9 @@ function onFullscreen() {
       :model="form"
       class="search-form bg-bg_color w-full pl-8 pt-[12px] overflow-auto"
     >
-      <el-form-item label="菜单名称：" prop="title">
+      <el-form-item label="菜单名称：" prop="menu_name">
         <el-input
-          v-model="form.title"
+          v-model="form.menu_name"
           placeholder="请输入菜单名称"
           clearable
           class="w-[180px]!"
@@ -88,7 +90,7 @@ function onFullscreen() {
           adaptive
           :adaptiveConfig="{ offsetBottom: 45 }"
           align-whole="center"
-          row-key="id"
+          row-key="s_mid"
           showOverflowTooltip
           table-layout="auto"
           :loading="loading"
@@ -103,6 +105,7 @@ function onFullscreen() {
         >
           <template #operation="{ row }">
             <el-button
+              v-if="row.pid !== 0"
               class="reset-margin"
               link
               type="primary"
@@ -113,25 +116,36 @@ function onFullscreen() {
               修改
             </el-button>
             <el-button
-              v-show="row.menuType !== 3"
+              v-show="row.flag !== 3"
               class="reset-margin"
               link
               type="primary"
               :size="size"
               :icon="useRenderIcon(AddFill)"
-              @click="openDialog('新增', { parentId: row.id } as any)"
+              @click="openDialog('新增', { pid: row.s_mid } as any)"
             >
               新增
             </el-button>
+            <el-button
+              class="reset-margin"
+              link
+              type="primary"
+              :size="size"
+              :icon="useRenderIcon(SetUp)"
+              @click="openPermitDialog(row)"
+            >
+              权限配置
+            </el-button>
             <el-popconfirm
-              :title="`是否确认删除菜单名称为${transformI18n(row.title)}的这条数据${row?.children?.length > 0 ? '。注意下级菜单也会一并删除，请谨慎操作' : ''}`"
+              v-if="row.pid !== 0"
+              :title="`是否确认删除菜单名称为${transformI18n(row.menu_name)}的这条数据${row?.children?.length > 0 ? '。注意下级菜单也会一并删除，请谨慎操作' : ''}`"
               @confirm="handleDelete(row)"
             >
               <template #reference>
                 <el-button
                   class="reset-margin"
                   link
-                  type="primary"
+                  type="danger"
                   :size="size"
                   :icon="useRenderIcon(Delete)"
                 >

@@ -21,7 +21,7 @@ import Close from "~icons/ep/close";
 import Check from "~icons/ep/check";
 
 defineOptions({
-  name: "SystemRole"
+  name: "menus.pureRole"
 });
 
 const iconClass = computed(() => {
@@ -60,22 +60,27 @@ const {
   isLinkage,
   pagination,
   isExpandAll,
-  isSelectAll,
   treeSearchValue,
   // buttonClass,
   onSearch,
   resetForm,
   openDialog,
   handleMenu,
-  handleSave,
   handleDelete,
   filterMethod,
   transformI18n,
   onQueryChanged,
   // handleDatabase,
+  handleCheck,
+  rolePermissions,
+  dataPermitOptions,
+  handleDataPermitChange,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
+  roleFunctionPermissions,
+  handleRoleFunctionPermitChange,
+  getAvailableDataPermitOptions
 } = useRole(treeRef);
 
 onMounted(() => {
@@ -98,32 +103,13 @@ onMounted(() => {
       :model="form"
       class="search-form bg-bg_color w-full pl-8 pt-[12px] overflow-auto"
     >
-      <el-form-item label="角色名称：" prop="name">
+      <el-form-item label="角色名称：" prop="roleName">
         <el-input
-          v-model="form.name"
+          v-model="form.roleName"
           placeholder="请输入角色名称"
           clearable
           class="w-[180px]!"
         />
-      </el-form-item>
-      <el-form-item label="角色标识：" prop="code">
-        <el-input
-          v-model="form.code"
-          placeholder="请输入角色标识"
-          clearable
-          class="w-[180px]!"
-        />
-      </el-form-item>
-      <el-form-item label="状态：" prop="status">
-        <el-select
-          v-model="form.status"
-          placeholder="请选择状态"
-          clearable
-          class="w-[180px]!"
-        >
-          <el-option label="已启用" value="1" />
-          <el-option label="已停用" value="0" />
-        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -145,9 +131,9 @@ onMounted(() => {
       :class="['flex', deviceDetection() ? 'flex-wrap' : '']"
     >
       <PureTableBar
-        :class="[isShow && !deviceDetection() ? 'w-[60vw]!' : 'w-full']"
+        :class="[isShow && !deviceDetection() ? 'w-[50vw]!' : 'w-full']"
         style="transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1)"
-        title="角色管理（仅演示，操作后不生效）"
+        title="职位管理"
         :columns="columns"
         @refresh="onSearch"
       >
@@ -194,7 +180,7 @@ onMounted(() => {
                 修改
               </el-button>
               <el-popconfirm
-                :title="`是否确认删除角色名称为${row.name}的这条数据`"
+                :title="`是否确认删除角色名称为${row.roleName}的这条数据`"
                 @confirm="handleDelete(row)"
               >
                 <template #reference>
@@ -219,43 +205,6 @@ onMounted(() => {
               >
                 权限
               </el-button>
-              <!-- <el-dropdown>
-              <el-button
-                class="ml-3 mt-[2px]"
-                link
-                type="primary"
-                :size="size"
-                :icon="useRenderIcon(More)"
-              />
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item>
-                    <el-button
-                      :class="buttonClass"
-                      link
-                      type="primary"
-                      :size="size"
-                      :icon="useRenderIcon(Menu)"
-                      @click="handleMenu"
-                    >
-                      菜单权限
-                    </el-button>
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <el-button
-                      :class="buttonClass"
-                      link
-                      type="primary"
-                      :size="size"
-                      :icon="useRenderIcon(Database)"
-                      @click="handleDatabase"
-                    >
-                      数据权限
-                    </el-button>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown> -->
             </template>
           </pure-table>
         </template>
@@ -263,7 +212,7 @@ onMounted(() => {
 
       <div
         v-if="isShow"
-        class="min-w-[calc(100vw-60vw-268px)]! w-full mt-2 px-2 pb-2 bg-bg_color ml-2 overflow-auto"
+        class="min-w-[calc(100vw-50vw-268px)]! w-full mt-2 px-2 pb-2 bg-bg_color ml-2 overflow-auto"
       >
         <div class="flex justify-between w-full px-3 pt-5 pb-4">
           <div class="flex">
@@ -279,22 +228,10 @@ onMounted(() => {
                 @click="handleMenu"
               />
             </span>
-            <span :class="[iconClass, 'ml-2']">
-              <IconifyIconOffline
-                v-tippy="{
-                  content: '保存菜单权限'
-                }"
-                class="dark:text-white"
-                width="18px"
-                height="18px"
-                :icon="Check"
-                @click="handleSave"
-              />
-            </span>
           </div>
           <p class="font-bold truncate">
             菜单权限
-            {{ `${curRow?.name ? `（${curRow.name}）` : ""}` }}
+            {{ `${curRow?.roleName ? `（${curRow.roleName}）` : ""}` }}
           </p>
         </div>
         <el-input
@@ -306,22 +243,72 @@ onMounted(() => {
         />
         <div class="flex flex-wrap">
           <el-checkbox v-model="isExpandAll" label="展开/折叠" />
-          <el-checkbox v-model="isSelectAll" label="全选/全不选" />
-          <el-checkbox v-model="isLinkage" label="父子联动" />
         </div>
-        <el-tree-v2
+        <el-tree
           ref="treeRef"
           show-checkbox
+          :default-expand-all="isExpandAll"
           :data="treeData"
           :props="treeProps"
           :height="treeHeight"
+          :node-key="treeProps.value"
           :check-strictly="!isLinkage"
           :filter-method="filterMethod"
+          @check="handleCheck"
         >
-          <template #default="{ node }">
-            <span>{{ transformI18n(node.label) }}</span>
+          <template #default="{ node, data }">
+            <div class="flex flex-col w-full">
+              <div class="flex items-center justify-between w-full">
+                <span>{{ transformI18n(node.label) }}</span>
+                <div
+                  v-if="
+                    rolePermissions[data.s_mid] !== undefined &&
+                    getAvailableDataPermitOptions(data).length > 0
+                  "
+                  @click.stop
+                >
+                  <el-select
+                    v-model="rolePermissions[data.s_mid]"
+                    placeholder="请选择数据权限"
+                    class="ml-2 mr-4 w-[100px]!"
+                    size="small"
+                    @change="handleDataPermitChange(data)"
+                  >
+                    <el-option
+                      v-for="item in getAvailableDataPermitOptions(data)"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </div>
+              </div>
+              <div
+                v-if="
+                  rolePermissions[data.s_mid] !== undefined &&
+                  data.permits?.length > 0
+                "
+                class="ml-4 mt-1 flex flex-wrap gap-x-4 gap-y-1 permission-group"
+                @click.stop
+              >
+                <el-checkbox
+                  v-for="p in data.permits"
+                  :key="p.s_pid"
+                  :model-value="
+                    roleFunctionPermissions[data.s_mid]?.includes(p.s_pid)
+                  "
+                  size="small"
+                  @change="
+                    (val: boolean) =>
+                      handleRoleFunctionPermitChange(data, p.s_pid, val)
+                  "
+                >
+                  {{ p.permit_name }}
+                </el-checkbox>
+              </div>
+            </div>
           </template>
-        </el-tree-v2>
+        </el-tree>
       </div>
     </div>
   </div>
@@ -340,5 +327,16 @@ onMounted(() => {
   :deep(.el-form-item) {
     margin-bottom: 12px;
   }
+}
+
+:deep(.el-tree-node__content) {
+  height: auto;
+  padding: 4px 0;
+}
+
+.permission-group {
+  padding: 4px 8px;
+  background-color: var(--el-fill-color-lighter);
+  border-radius: 4px;
 }
 </style>
